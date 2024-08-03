@@ -1,18 +1,22 @@
-
+-- Register the command /cleararea
 RegisterCommand("cleararea", function(source, args, rawCommand)
-
+    -- Get player ped
     local playerPed = PlayerPedId()
-    local playerCoords = GetEntityCoords(playerPed)]
+    -- Get player coordinates
+    local playerCoords = GetEntityCoords(playerPed)
+
+    -- Set default radius
     local radius = 30.0
 
+    -- Check if radius is provided in command arguments
     if #args > 0 then
         radius = tonumber(args[1]) or 30.0
     end
 
-    -- Log to console use F8 to see menu
+    -- Log to console
     print(string.format("Clearing area around player with radius: %.2f", radius))
 
-    -- Clear area using nativesm add more from CFX document page
+    -- Clear area using natives
     ClearArea(playerCoords.x, playerCoords.y, playerCoords.z, radius, true, false, false, false)
     print("ClearArea executed")
     ClearAreaOfCops(playerCoords.x, playerCoords.y, playerCoords.z, radius, false)
@@ -24,7 +28,7 @@ RegisterCommand("cleararea", function(source, args, rawCommand)
     ClearAreaOfVehicles(playerCoords.x, playerCoords.y, playerCoords.z, radius, false, false, false, false, false)
     print("ClearAreaOfVehicles executed")
 
-
+    -- Force clear entities if natives fail
     local entities = GetGamePool('CObject')
     for _, entity in ipairs(entities) do
         local entityCoords = GetEntityCoords(entity)
@@ -49,13 +53,13 @@ RegisterCommand("cleararea", function(source, args, rawCommand)
         end
     end
 
-    -- Notify player in skybox chat
+    -- Notify player
     TriggerEvent('chat:addMessage', {
         args = { "Area cleared!" }
     })
 end, false)
 
-    -- Command Functionallity for chat. Radius is able to be changed if wanted.
+-- Add a suggestion for the command in chat
 TriggerEvent('chat:addSuggestion', '/cleararea', 'Clears all objects, peds, and vehicles in a specified radius', {
-    { name="radius", help="Radius to clear (default is 1000.0)" }
+    { name="radius", help="Radius to clear (default is 30.0)" }
 })
